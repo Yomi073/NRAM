@@ -101,28 +101,28 @@ class AppThemes {
             fontSize: 16.0,
             letterSpacing: 0.5,
             fontWeight: FontWeight.normal,
-            color: blue,
+            color: darkBlue,
             fontFamily: 'Barlow'),
         bodyMedium: TextStyle(
             fontSize: 14.0,
             letterSpacing: 0.25,
             fontWeight: FontWeight.normal,
-            color: blue,
+            color: darkBlue,
             fontFamily: 'Barlow'),
         bodySmall: TextStyle(
             fontSize: 12.0,
             letterSpacing: 0.4,
             fontWeight: FontWeight.normal,
-            color: blue,
+            color: darkBlue,
             fontFamily: 'Barlow'),
       ),
       colorScheme: const ColorScheme.light(
         primary: blue,
-        secondary: magenta,
-        onPrimary: white,
-        onSecondary: white,
+        secondary: darkYellow,
+        onPrimary: lightYellow,
+        onSecondary: lightYellow,
         error: fuchsia,
-      ).copyWith(secondary: magenta),
+      ),
     );
   }
 

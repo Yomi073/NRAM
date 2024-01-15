@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pv_smart_click/config/theme/app_themes.dart';
 
 class MyButton extends StatelessWidget {
-  final Function()? onTap;
+  final Function(BuildContext context)? onTap;
   final String labelText;
 
   const MyButton({
@@ -14,7 +14,7 @@ class MyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => onTap?.call(context),
       child: Container(
         padding: EdgeInsets.all(10),
         margin: EdgeInsets.symmetric(horizontal: 25),
