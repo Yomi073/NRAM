@@ -31,40 +31,45 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 children: <Widget>[
                   const SizedBox(height: 48.0),
                   Text(
-                    'Registriraj se!',
+                    'Create account',
                     style: Theme.of(context).textTheme.displayMedium,
+                  ),
+                  const SizedBox(height: 48.0),
+                  Text(
+                    'Sign up today to unlock a personalized experience tailored just for you!',
+                    style: Theme.of(context).textTheme.displaySmall,
                   ),
                   const SizedBox(height: 30.0),
                   MyTextField(
                     controller: nameController,
-                    labelText: 'Ime:',
-                    hintText: 'Upiši svoje ime',
+                    labelText: 'Name',
+                    hintText: 'Enter your name',
                     obscureText: false,
                   ),
                   const SizedBox(height: 20.0),
                   MyTextField(
                     controller: usernameController,
-                    labelText: 'E-mail:',
-                    hintText: 'Upiši e-mail',
+                    labelText: 'Email',
+                    hintText: 'Enter your email',
                     obscureText: false,
                   ),
                   const SizedBox(height: 20.0),
                   MyTextField(
                     controller: passwordController,
-                    labelText: 'Lozinka:',
-                    hintText: 'Upiši svoju lozinku',
+                    labelText: 'Password',
+                    hintText: 'Enter your password',
                     obscureText: true,
                   ),
                   const SizedBox(height: 20.0),
                   MyTextField(
                     controller: confirmPasswordController,
-                    labelText: 'Potvrdi lozinku:',
-                    hintText: 'Potvrdi svoju lozinku',
+                    labelText: 'Confirm password',
+                    hintText: 'Confirm your password',
                     obscureText: true,
                   ),
                   const SizedBox(height: 48.0),
                   MyButton(
-                    labelText: "REGISTRIRAJ SE",
+                    labelText: "Sign up",
                     onTap: (context) {
                       signInUser(context);
                     },

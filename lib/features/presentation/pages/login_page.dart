@@ -28,33 +28,33 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   const SizedBox(height: 48.0),
                   Text(
-                    'Dobrodošli natrag!',
+                    'Welcome back!',
                     style: Theme.of(context).textTheme.displayMedium,
                   ),
                   const SizedBox(height: 48.0),
                   MyTextField(
                     controller: usernameController,
-                    labelText: 'E-mail:',
-                    hintText: 'Upiši e-mail',
+                    labelText: 'Email',
+                    hintText: 'Enter your email',
                     obscureText: false,
                   ),
                   const SizedBox(height: 24.0),
                   MyTextField(
                     controller: passwordController,
-                    labelText: 'Lozinka:',
-                    hintText: 'Upiši svoju lozinku',
+                    labelText: 'Password',
+                    hintText: 'Enter your password',
                     obscureText: true,
                   ),
                   const SizedBox(height: 48.0),
                   MyButton(
-                    labelText: "PRIJAVI SE",
+                    labelText: "Login",
                     onTap: (context) {
                       signUpUser(context);
                     },
                   ),
                   TextButton(
                     child: Text(
-                      'Još nemaš račun? Registriraj se ovdje',
+                      "Don't have an account? Sign up!",
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     onPressed: () {
