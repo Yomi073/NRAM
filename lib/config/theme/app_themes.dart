@@ -7,9 +7,9 @@ const Color blue = Color(0xFF003400);
 const Color lightBlue = Color(0xFF85A2FD);
 const Color fuchsia = Color(0xFF974040);
 const Color magenta = Color(0xFFF34768);
-const Color roofOrange = Color(0xFFFF9577);
-const Color darkYellow = Color(0xFFF7B033);
-const Color lightYellow = Color(0xFFFBEBCE);
+const Color roofOrange = Color(0xFFFFE88E);
+const Color darkYellow = Color(0xFFFDE792);
+const Color lightYellow = Color(0xFFFFF0B4);
 const Color white = Color(0xFFFFFFFF);
 const Color green1 = Color(0xFF409797);
 const Color green2 = Color(0xFF47f3d2);
@@ -20,6 +20,9 @@ const Color backgroundLight = Color(0xFFFAF5E9);
 const Color backgroundDark = Color(0xFF001600);
 const Color primaryButtonDark = Color(0xFFFFCC00);
 const Color primaryTextDark = Color(0xFFFBEBCE);
+const Color tableDark = Color(0xFF032B03);
+const Color tableSecondDark = Color(0xFF012301);
+
 
 
 class AppThemes {
@@ -49,7 +52,7 @@ class AppThemes {
             fontWeight: FontWeight.bold,
             color: backgroundDark),
         displayMedium: TextStyle(
-            fontSize: 38.0,
+            fontSize: 36.0,
             fontWeight: FontWeight.bold,
             color: backgroundDark),
         displaySmall: TextStyle(
@@ -83,7 +86,7 @@ class AppThemes {
             color: white),
         //FOR LABELS  ON WHITE
         labelLarge: TextStyle(
-            fontSize: 24.0,
+            fontSize: 22.0,
             fontWeight: FontWeight.bold,
             color: backgroundDark),
         labelMedium: TextStyle(
@@ -117,6 +120,7 @@ class AppThemes {
         onPrimary: lightYellow,
         onSecondary: lightYellow,
         error: fuchsia,
+        surfaceVariant: backgroundLight,
       ),
     );
   }
@@ -135,7 +139,7 @@ class AppThemes {
         textTheme: ButtonTextTheme.primary,
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: roofOrange,
+        backgroundColor: tableDark,
       ),
       textTheme: const TextTheme(
         titleLarge: TextStyle(
@@ -143,26 +147,30 @@ class AppThemes {
             fontWeight: FontWeight.bold,
             color: backgroundDark),
           displayMedium: TextStyle(
-              fontSize: 38.0,
+              fontSize: 36.0,
               fontWeight: FontWeight.bold,
               color: primaryTextDark,),
           displaySmall: TextStyle(
             fontSize: 20.0,
             fontWeight: FontWeight.w500,
             color: primaryTextDark),
+        labelLarge: TextStyle(
+            fontSize: 22.0,
+            fontWeight: FontWeight.bold,),
         bodyLarge: TextStyle(color: lightYellow),
       ),
       colorScheme: const ColorScheme.dark(
         primary: primaryButtonDark,
-        secondary: roofOrange,
+        secondary: tableDark,
         onPrimary: backgroundDark,
-        onSecondary: white,
+        onSecondary: tableSecondDark,
         error: fuchsia,
-        background: pscBlack,
-        surface: darkBlue,
+        background: tableSecondDark,
+        surface: backgroundDark,
         onBackground: white,
         onSurface: primaryTextDark,
-      ).copyWith(secondary: roofOrange),
+        surfaceVariant: backgroundDark,
+      ).copyWith(secondary: tableDark),
     );
   }
 }

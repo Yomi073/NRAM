@@ -17,6 +17,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
   final azimuth = TextEditingController();
   final area = TextEditingController();
 
+  List<String> countries = [
+    'Albania',
+    'Bosnia and Herzegovina',
+    'Bulgaria',
+    'Croatia',
+    'Greece',
+    'Kosovo',
+    'Montenegro',
+    'North Macedonia',
+    'Romania',
+    'Serbia',
+  ];
+  String? selectedCountry = 'Croatia';
+
+  double _currentSliderValue = 20;
+
   void calculate(BuildContext context) {
     Navigator.pushReplacementNamed(context, '/result');
   }
@@ -34,15 +50,28 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 children: <Widget>[
                   const SizedBox(height: 48.0),
                   Text(
-                    'Osnovni kalkulator',
+                    'Base calculator',
                     style: Theme.of(context).textTheme.displayMedium,
                   ),
                   const SizedBox(height: 30.0),
-                  MyTextField(
-                    controller: country,
-                    labelText: 'Država:',
-                    hintText: 'Odaberite državu',
-                    obscureText: false,
+
+                  const SizedBox(height: 30.0),
+                  Text(
+                    'Country',
+                    style: Theme.of(context).textTheme.displaySmall,
+                  ),
+                  DropdownButton(
+                      menuMaxHeight: 300,
+                      value: selectedCountry,
+                      items: countries
+                          .map((item) => DropdownMenuItem(
+                          value: item,
+                          child: Text(
+                              item,
+                              style: TextStyle(fontSize: 22))
+                      ))
+                          .toList(),
+                      onChanged: (item) => setState(() => selectedCountry = item)
                   ),
                   const SizedBox(height: 20.0),
                   MyTextField(
@@ -68,13 +97,22 @@ class _CalculatorPageState extends State<CalculatorPage> {
                   ),
                   const SizedBox(height: 20.0),
                   */
-                  MyTextField(
-                    controller: roofSlope,
-                    labelText: 'Nagib krova:',
-                    hintText: 'Upišite nagib krova',
-                    obscureText: false,
+                  Text(
+                    'Roof Pitch',
+                    style: Theme.of(context).textTheme.displaySmall,
                   ),
-                  const SizedBox(height: 20.0),
+                  const SizedBox(height: 10.0),
+                  Slider(
+                    value: _currentSliderValue,
+                    max: 180,
+                    divisions: 180,
+                    label: _currentSliderValue.round().toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        _currentSliderValue = value;
+                      });
+                    },
+                  ),
                   MyTextField(
                     controller: azimuth,
                     labelText: 'Orijentacija:',
