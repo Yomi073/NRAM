@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
           Provider.of<AuthTokenProvider>(context, listen: false);
       authTokenProvider.setBearerToken(jwt);
       Navigator.pushNamed(context, '/calculator');
-    } else if (response.statusCode == 400) {
+    } else if (response.statusCode != 200) {
       Fluttertoast.showToast(
           msg: "Wrong credentials",
           toastLength: Toast.LENGTH_SHORT,
