@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:pv_smart_click/core/resources/data_state.dart';
+import 'package:pv_smart_click/features/domain/entities/login_request.dart';
 import 'package:pv_smart_click/features/domain/entities/login_response.dart';
 import 'package:pv_smart_click/features/domain/usecases/post_login.dart';
 
@@ -21,7 +22,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Future<void> onPostLogin(PostLogin event, Emitter<LoginState> emmit) async {
     final dataState = await _postLoginUseCase();
 
-    if (dataState is DataSuccess && dataState.data!.isNotEmpty) {
+    if (dataState is DataSuccess &&
+        dataState.data!.toString().toString().isNotEmpty) {
       emit(LoginDone(dataState.data!));
     }
 

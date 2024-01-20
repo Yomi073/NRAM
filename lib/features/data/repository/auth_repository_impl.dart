@@ -15,10 +15,16 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<DataState<LoginResponse>> postLogin(LoginRequest loginRequest) async {
     try {
-      final httpResponse = await _apiService.postLogin();
+      print("MAKING REQUEST TO LOGIN");
+      final httpResponse = await _apiService.postLogin(
+        loginRequest: loginRequest,
+      );
+
       if (httpResponse.response.statusCode == HttpStatus.ok) {
+        print("LOGIN OK");
         return DataSuccess(httpResponse.data);
       } else {
+        print("LOGIN FAILED");
         return DataFailed(DioException(
           error: httpResponse.response.statusMessage,
           response: httpResponse.response,
