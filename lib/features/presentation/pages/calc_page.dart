@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:pv_smart_click/features/presentation/widgets/my_button.dart';
 
 import 'package:http/http.dart' as http;
@@ -15,12 +16,12 @@ class CalculatorPage extends StatefulWidget {
 
 
 
-Future<dynamic> fetchSupplier(queryParams) async {
+Future<dynamic> fetchSupplier(queryParams, bearerToken) async {
   final response = await http
       .get(Uri.parse('https://dev.backend.pvsmartclick.com/price/supplierName').replace(queryParameters: queryParams),
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer xxx', // Example: Authorization header with a bearer token
+      'Authorization': bearerToken, // Example: Authorization header with a bearer token
     },
   );
 
@@ -39,13 +40,17 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String countryCode = "";
   List<String> possibleTariffModels = [''];
 
+  String? bearerToken;
+
   @override
   void initState() {
     super.initState();
-    fetchData();
+    final authTokenProvider = Provider.of<AuthTokenProvider>(context,  listen: false);
+    String? token = authTokenProvider.bearerToken;
+    fetchData(token);
   }
 
-  Future<dynamic> fetchData() async {
+  Future<dynamic> fetchData(bearerToken) async {
     final List<Map<String, String>> queryParamsList = [
       {'country': 'HR', 'privacyStatus': 'PUBLIC_ALL'},
       {'country': 'BA', 'privacyStatus': 'PUBLIC_ALL'},
@@ -55,7 +60,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
     for (var queryParams in queryParamsList) {
       try {
-        dynamic result = await fetchSupplier(queryParams);
+        dynamic result = await fetchSupplier(queryParams, bearerToken);
 
         if (result is String) {
           List<dynamic> decodedResult = json.decode(result);
@@ -165,7 +170,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
   double _currentSliderValue = 20;
 
   void calculate(BuildContext context) {
-
+    print(bearerToken);
     Navigator.pushReplacementNamed(context, '/result');
   }
 
