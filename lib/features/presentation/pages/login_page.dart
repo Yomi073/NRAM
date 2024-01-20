@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:pv_smart_click/features/presentation/widgets/my_button.dart';
 import 'package:pv_smart_click/features/presentation/widgets/textfield.dart';
@@ -19,25 +20,46 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
 
   void signInUser(BuildContext context) async {
+    final email = usernameController.text;
+    final password = passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      Fluttertoast.showToast(
+        msg: "Please fill in both email and password fields.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.black,
+        fontSize: 18.0,
+      );
+      return;
+    }
+
     final response = await http.post(
       Uri.parse('https://dev.backend.pvsmartclick.com/auth/login'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzUxMiJ9.eyJmaXJzdE5hbWUiOiJSYWRlIiwibGFzdE5hbWUiOiJCZWJlayIsInVzZXJJZCI6IjY1NWE5YzFmNmQ5ODViMjc1NTVhNTBlMSIsImVtYWlsIjoicmFkZS5iZWJla0BpY2xvdWQuY29tIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9QRVJTT05BTCJdLCJpYXQiOjE3MDU3NDc5MjcsImV4cCI6MTcwNTgzNDMyN30.Jid5kXvyHBbdixbd7HIoEqo75-xLBaUnBtgFg6_FXReh44rCjyhs0CA_hbEReqAyKbeF6SE9Gpyk0xwkea10Zw',
       },
       body: jsonEncode(<String, String>{
-        'email': usernameController.text,
-        'password': passwordController.text,
+        'email': email,
+        'password': password,
       }),
     );
 
     if (response.statusCode == 200) {
       var jwt = response.headers['x-api-authentication-token'];
-      print(jwt);
       final authTokenProvider =
           Provider.of<AuthTokenProvider>(context, listen: false);
       authTokenProvider.setBearerToken(jwt);
+      Navigator.pushNamed(context, '/calculator');
+    } else if (response.statusCode == 400) {
+      Fluttertoast.showToast(
+          msg: "Wrong credentials",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.black,
+          fontSize: 18.0);
     } else {
       throw Exception(response.body);
     }
