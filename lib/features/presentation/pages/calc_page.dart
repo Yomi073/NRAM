@@ -20,7 +20,7 @@ Future<dynamic> fetchSupplier(queryParams) async {
       .get(Uri.parse('https://dev.backend.pvsmartclick.com/price/supplierName').replace(queryParameters: queryParams),
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJmaXJzdE5hbWUiOiJNaWpvIiwibGFzdE5hbWUiOiJLb3ppbmEiLCJ1c2VySWQiOiI2NTVkMDdkMTdhOWM3NjIwNGU5NGY3YTAiLCJlbWFpbCI6Im1pam9rb3ppbmFAZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9CVVNJTkVTUyJdLCJpYXQiOjE3MDU3NTgzMTUsImV4cCI6MTcwNTg0NDcxNX0.8pDnrYetoayDyj5_88obdGWGshCZxr3-l-YiEuigm1Kfkn7Bk7h53rCSo3ke9TW2RI1wBQtJVFpu2YGlTGxj0g', // Example: Authorization header with a bearer token
+      'Authorization': 'Bearer xxx', // Example: Authorization header with a bearer token
     },
   );
 
@@ -96,7 +96,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     }),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJmaXJzdE5hbWUiOiJNaWpvIiwibGFzdE5hbWUiOiJLb3ppbmEiLCJ1c2VySWQiOiI2NTVkMDdkMTdhOWM3NjIwNGU5NGY3YTAiLCJlbWFpbCI6Im1pam9rb3ppbmFAZ21haWwuY29tIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9CVVNJTkVTUyJdLCJpYXQiOjE3MDU3NTEyMDYsImV4cCI6MTcwNTgzNzYwNn0.BnrGHlnMI4zC_z-29IfUsP4QBCb9B0by109cC5skat3k5Sv6XIJ5xTc5sugLdo5YI7-9HatJybnc-FtgXMu5KQ', // Example: Authorization header with a bearer token
+        'Authorization': 'Bearer xxx', // Example: Authorization header with a bearer token
       },
     );
 
