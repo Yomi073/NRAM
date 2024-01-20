@@ -20,14 +20,29 @@ class _LoginPageState extends State<LoginPage> {
   final passwordController = TextEditingController();
 
   void signInUser(BuildContext context) async {
+    final email = usernameController.text;
+    final password = passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      Fluttertoast.showToast(
+        msg: "Please fill in both email and password fields.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        textColor: Colors.black,
+        fontSize: 18.0,
+      );
+      return;
+    }
+
     final response = await http.post(
       Uri.parse('https://dev.backend.pvsmartclick.com/auth/login'),
       headers: {
         'Content-Type': 'application/json',
       },
       body: jsonEncode(<String, String>{
-        'email': usernameController.text,
-        'password': passwordController.text,
+        'email': email,
+        'password': password,
       }),
     );
 
