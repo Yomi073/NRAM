@@ -10,7 +10,7 @@ const Color magenta = Color(0xFFF34768);
 const Color roofOrange = Color(0xFFFFE88E);
 const Color darkYellow = Color(0xFFFDE792);
 const Color lightYellow = Color(0xFFFFF0B4);
-const Color white = Color(0xFFFFFFFF);
+const Color white = Color(0xFFFFF0B4);
 const Color green1 = Color(0xFF409797);
 const Color green2 = Color(0xFF47f3d2);
 
@@ -22,6 +22,7 @@ const Color primaryButtonDark = Color(0xFFFFCC00);
 const Color primaryTextDark = Color(0xFFFBEBCE);
 const Color tableDark = Color(0xFF032B03);
 const Color tableSecondDark = Color(0xFF012301);
+const Color lightGreen = Color(0xFFACC7AC);
 
 
 
@@ -30,6 +31,9 @@ class AppThemes {
     return ThemeData(
       fontFamily: GoogleFonts.poppins().fontFamily,
       primaryColor: blue,
+      focusColor: blue,
+      hintColor: tableSecondDark,
+      shadowColor: lightGreen,
       scaffoldBackgroundColor: backgroundLight,
       appBarTheme: const AppBarTheme(
         color: blue,
@@ -79,11 +83,11 @@ class AppThemes {
         titleMedium: TextStyle(
             fontSize: 16.0,
             fontWeight: FontWeight.bold,
-            color: white),
+            color: lightYellow),
         titleSmall: TextStyle(
             fontSize: 14.0,
             fontWeight: FontWeight.bold,
-            color: white),
+            color: lightYellow),
         //FOR LABELS  ON WHITE
         labelLarge: TextStyle(
             fontSize: 22.0,
@@ -130,6 +134,9 @@ class AppThemes {
       fontFamily: GoogleFonts.poppins().fontFamily,
       primaryColor: backgroundDark,
       scaffoldBackgroundColor: backgroundDark,
+      hintColor: lightYellow,
+      shadowColor: lightGreen,
+      focusColor: primaryButtonDark,
       appBarTheme: const AppBarTheme(
         color: darkBlue,
         iconTheme: IconThemeData(color: white),
@@ -167,7 +174,7 @@ class AppThemes {
         error: fuchsia,
         background: tableSecondDark,
         surface: backgroundDark,
-        onBackground: white,
+        onBackground: lightYellow,
         onSurface: primaryTextDark,
         surfaceVariant: backgroundDark,
       ).copyWith(secondary: tableDark),

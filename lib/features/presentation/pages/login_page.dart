@@ -1,6 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
+import 'package:pv_smart_click/features/data/repository/auth_token_provider.dart';
 import 'package:pv_smart_click/features/presentation/widgets/my_button.dart';
 import 'package:pv_smart_click/features/presentation/widgets/textfield.dart';
+import 'package:pv_smart_click/core/constants/constants.dart';
+
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   @override
@@ -11,8 +19,48 @@ class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
-  void signUpUser(BuildContext context) {
-    Navigator.pushReplacementNamed(context, '/home');
+  void signInUser(BuildContext context) async {
+    final email = usernameController.text;
+    final password = passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      Fluttertoast.showToast(
+        msg: "Please fill in both email and password fields.",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        fontSize: 18.0,
+      );
+      return;
+    }
+
+    final response = await http.post(
+      Uri.parse('$apiBaseURL/auth/login'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      var jwt = response.headers['x-api-authentication-token'];
+      final authTokenProvider = Provider.of<AuthTokenProvider>(context, listen: false);
+      authTokenProvider.setBearerToken(jwt);
+      Navigator.pushNamed(context, '/calculator');
+    } else if (response.statusCode != 200) {
+      Fluttertoast.showToast(
+        msg: "Wrong credentials",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        fontSize: 18.0,
+      );
+    } else {
+      throw Exception(response.body);
+    }
   }
 
   @override
@@ -49,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                   MyButton(
                     labelText: "Login",
                     onTap: (context) {
-                      signUpUser(context);
+                      signInUser(context);
                     },
                   ),
                   TextButton(

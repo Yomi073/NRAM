@@ -1,20 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:pv_smart_click/config/theme/app_themes.dart';
-import 'package:pv_smart_click/features/presentation/widgets/my_button.dart';
-import 'package:pv_smart_click/features/presentation/widgets/textfield.dart';
+import 'package:provider/provider.dart';
+import 'package:pv_smart_click/features/data/repository/auth_token_provider.dart';
+import 'package:pv_smart_click/features/domain/entities/analysis_response.dart';
 
 class ResultPage extends StatefulWidget {
+  final AnalysisResponse? analysisResponse;
+
+  ResultPage({Key? key, this.analysisResponse}) : super(key: key);
+
   @override
   _ResultPageState createState() => _ResultPageState();
 }
 
 class _ResultPageState extends State<ResultPage> {
-  void back(BuildContext context) {
-    Navigator.pushReplacementNamed(context, '/calculator');
+  String? bearerToken;
+  String tilt = "";
+  String area = "";
+  String azimuth = "";
+  String consumptionAverageBill = "";
+  String googleLatLng = "";
+  String priceID = "";
+  String siteDataInputType = "";
+  String typeCalculation = "";
+  AnalysisResponse? analysisResponse;
+  Map<String, String>? parameters;
+
+  @override
+  void initState() {
+    super.initState();
+    final authTokenProvider = Provider.of<AuthTokenProvider>(context, listen: false);
+    bearerToken = authTokenProvider.bearerToken;
   }
 
   @override
   Widget build(BuildContext context) {
+    AnalysisResponse? analysisResponse = widget.analysisResponse;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -45,7 +66,7 @@ class _ResultPageState extends State<ResultPage> {
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
-                          '84%',
+                          analysisResponse?.selfSufficiencyPercentage as String,
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
@@ -62,7 +83,7 @@ class _ResultPageState extends State<ResultPage> {
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
-                          '6.31 kW',
+                          '${analysisResponse?.systemCapacity as String} kW',
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
@@ -79,7 +100,7 @@ class _ResultPageState extends State<ResultPage> {
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
-                          '31.54 m2',
+                          '${analysisResponse?.area as String} m2',
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
@@ -138,14 +159,14 @@ class _ResultPageState extends State<ResultPage> {
                         ),
                         Expanded(
                           child: Text(
-                            '9,434.41 kWh',
+                            '${analysisResponse?.annualConsumptionKWh as String} kWh',
                             style: Theme.of(context).textTheme.bodyLarge,
                             textAlign: TextAlign.center,
                           ),
                         ),
                         Expanded(
                           child: Text(
-                            '1,550.36 kWh',
+                            '${analysisResponse?.annualReductionConsumptionKWh as String} kWh',
                             style: Theme.of(context).textTheme.bodyLarge,
                             textAlign: TextAlign.right,
                           ),
@@ -167,14 +188,14 @@ class _ResultPageState extends State<ResultPage> {
                         ),
                         Expanded(
                           child: Text(
-                            '1,200 EUR',
+                            '${analysisResponse?.annualConsumptionMoney as String} EUR',
                             style: Theme.of(context).textTheme.bodyLarge,
                             textAlign: TextAlign.center,
                           ),
                         ),
                         Expanded(
                           child: Text(
-                            '176.82 EUR',
+                            '${analysisResponse?.annualReductionConsumptionMoney as String}  EUR',
                             style: Theme.of(context).textTheme.bodyLarge,
                             textAlign: TextAlign.right,
                           ),
@@ -203,7 +224,7 @@ class _ResultPageState extends State<ResultPage> {
                         ),
                         Expanded(
                           child: Text(
-                            '85.26 %',
+                            '${analysisResponse?.annualReductionConsumptionPercentage as String}  %',
                             style: Theme.of(context).textTheme.bodyLarge,
                             textAlign: TextAlign.right,
                           ),
@@ -232,7 +253,7 @@ class _ResultPageState extends State<ResultPage> {
                         ),
                         Expanded(
                           child: Text(
-                            '4,231.05 kg',
+                            '${analysisResponse?.annualCO2Reduction as String} kg',
                             style: Theme.of(context).textTheme.bodyLarge,
                             textAlign: TextAlign.right,
                           ),
@@ -265,7 +286,7 @@ class _ResultPageState extends State<ResultPage> {
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
-                          '5,046.64 EUR',
+                          '${analysisResponse?.investment as String} EUR',
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
@@ -282,7 +303,7 @@ class _ResultPageState extends State<ResultPage> {
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
-                          '4.93',
+                          analysisResponse?.investmentReturn as String,
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
@@ -299,7 +320,7 @@ class _ResultPageState extends State<ResultPage> {
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                         Text(
-                          '23,685.91',
+                          '${analysisResponse?.lifeSavings as String} EUR',
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
