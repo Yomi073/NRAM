@@ -15,9 +15,6 @@ class CalculatorPage extends StatefulWidget {
   _CalculatorPageState createState() => _CalculatorPageState();
 }
 
-//mijokozina@gmail.com
-//PVSmartClick1
-
 class _CalculatorPageState extends State<CalculatorPage> {
   String? bearerToken;
   List<Map<String, dynamic>> fetchedData = [];
@@ -324,12 +321,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     obscureText: false,
                   ),
                   TextField(
-                    controller: area,
+                    controller: consumption,
                     keyboardType: TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}$'))],
                     decoration: const InputDecoration(
                       labelText: 'Consumption',
-                      hintText: 'Enter the average monthly consumption in EUR',
+                      hintText: 'Average monthly consumption in EUR',
                     ),
                     obscureText: false,
                   ),
