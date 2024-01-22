@@ -5,10 +5,15 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pv_smart_click/features/data/repository/auth_token_provider.dart';
+import 'package:pv_smart_click/features/domain/entities/analysis_request.dart';
+import 'package:pv_smart_click/features/domain/entities/googleLatLng.dart';
+import 'package:pv_smart_click/features/domain/entities/tariff_response.dart';
 import 'package:pv_smart_click/features/presentation/widgets/my_button.dart';
 import 'package:pv_smart_click/core/constants/constants.dart';
 
 import 'package:http/http.dart' as http;
+
+import '../../domain/entities/analysis_response.dart';
 
 class CalculatorPage extends StatefulWidget {
   @override
@@ -18,13 +23,13 @@ class CalculatorPage extends StatefulWidget {
 class _CalculatorPageState extends State<CalculatorPage> {
   String? bearerToken;
   List<Map<String, dynamic>> fetchedData = [];
-  final area = TextEditingController();
-  final consumption = TextEditingController();
+  TextEditingController area = TextEditingController();
+  TextEditingController consumption = TextEditingController();
   List<String> countries = [
     'Croatia',
     'Bosnia and Herzegovina',
   ];
-  List<String> suppliers = [
+  List<String?> suppliers = [
     '',
   ];
   List<String> tariffGroups = [
@@ -33,7 +38,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
   String? countryCode = 'HR';
   String? selectedCountry = 'Croatia';
   String? selectedSupplier = '';
+  List<TariffModel> tempTariffModels = [];
   String? selectedTariffGroup = '';
+  String? priceID = '';
 
   @override
   void initState() {
@@ -70,7 +77,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     }
   }
 
-  Future<List<String>> fetchTariffGroup(supplierName, bearerToken) async {
+  Future<List<TariffModel>> fetchTariffGroup(supplierName, bearerToken) async {
     final response = await http.get(
       Uri.parse('$apiBaseURL/price/tariffName').replace(queryParameters: {
         'country': countryCode,
@@ -85,7 +92,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = jsonDecode(response.body);
-      return jsonResponse.map((item) => item['tariffModel'].toString()).toList();
+      tempTariffModels = jsonResponse.map<TariffModel>((item) => TariffModel.fromJson(item)).toList();
+      return tempTariffModels;
     } else {
       Fluttertoast.showToast(
         msg: "Could not fetch suppliers",
@@ -94,7 +102,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
         timeInSecForIosWeb: 1,
         fontSize: 18.0,
       );
-      return [''];
+      return [];
     }
   }
 
@@ -121,14 +129,27 @@ class _CalculatorPageState extends State<CalculatorPage> {
   }
 
   void supplierDropdownUpdate() async {
-    List<String> tempTariffGroups = await fetchTariffGroup(selectedSupplier, bearerToken);
+    List<TariffModel> tempTariffGroups = await fetchTariffGroup(selectedSupplier, bearerToken);
     setState(() {
-      tariffGroups = tempTariffGroups;
+      tariffGroups = tempTariffGroups.map((tariffModel) {
+        return tariffModel.tariffModel ?? '';
+      }).toList();
       if (tariffGroups.isNotEmpty) {
         selectedTariffGroup = tariffGroups.contains(selectedTariffGroup) ? selectedTariffGroup : tariffGroups.first;
       } else {
         selectedTariffGroup = '';
       }
+    });
+    tariffDropdownUpdate();
+  }
+
+  void tariffDropdownUpdate() {
+    TariffModel selectedTariff = tempTariffModels.firstWhere(
+      (tariff) => tariff.tariffModel == selectedTariffGroup,
+      orElse: () => throw Exception('Tariff model not found'),
+    );
+    setState(() {
+      priceID = selectedTariff.priceId;
     });
   }
 
@@ -152,10 +173,62 @@ class _CalculatorPageState extends State<CalculatorPage> {
     return orientationLabels[index];
   }
 
-  void calculate(BuildContext context) {
-    print(_roofAngleSlider);
-    print(_roofOrientationSlider * 45);
-    //Navigator.pushReplacementNamed(context, '/result');
+  Future<void> calculate(BuildContext context, String bearerToken) async {
+    if ((selectedCountry?.isEmpty ?? true) || (selectedSupplier?.isEmpty ?? true) || (selectedTariffGroup?.isEmpty ?? true) || (area.text.isEmpty) || (consumption.text.isEmpty)) {
+      Fluttertoast.showToast(
+        msg: "Please fill all fields",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        fontSize: 18.0,
+      );
+    } else {
+      GoogleLatLng googleLatLng = GoogleLatLng(
+        lat: '43.1783936',
+        lng: '17.5439872',
+      );
+      AnalysisRequest analysisRequest = AnalysisRequest(
+        tilt: _roofAngleSlider.toString(),
+        area: area.text,
+        azimuth: (_roofOrientationSlider * 45).toString(),
+        consumptionAverageBill: consumption.text,
+        googleLatLng: googleLatLng,
+        priceID: priceID.toString(),
+        siteDataInputType: "PVGIS",
+        typeCalculation: "${countryCode!}_FEED_IN_NET",
+      );
+
+      var jsonBody = jsonEncode(analysisRequest.toJson());
+
+      final response = await http.post(
+        Uri.parse('$apiBaseURL/analysis/basic/pvgis/monthly'),
+        headers: {'Content-Type': 'application/json', 'X-API-authentication-token': bearerToken},
+        body: jsonBody,
+      );
+      AnalysisResponse? analysisResponse;
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonMap = jsonDecode(response.body);
+        analysisResponse = AnalysisResponse.fromJson(jsonMap);
+      } else {
+        Fluttertoast.showToast(
+          msg: response.body,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 18.0,
+        );
+      }
+
+      Navigator.pushNamed(
+        context,
+        '/result',
+        arguments: analysisResponse,
+      );
+    }
+  }
+
+  String doubleToSting(double value) {
+    return value.toStringAsFixed(2);
   }
 
   @override
@@ -171,7 +244,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 children: <Widget>[
                   const SizedBox(height: 48.0),
                   Text(
-                    'Base calculator',
+                    'Calculator',
                     style: Theme.of(context).textTheme.displayMedium,
                   ),
                   const SizedBox(height: 30.0),
@@ -241,6 +314,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                           .toList(),
                       onChanged: (item) => setState(() {
                             selectedTariffGroup = item;
+                            tariffDropdownUpdate();
                           })),
                   const SizedBox(height: 30.0),
                   Text(
@@ -330,7 +404,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                   MyButton(
                     labelText: "Calculate",
                     onTap: (context) {
-                      calculate(context);
+                      calculate(context, bearerToken!);
                     },
                   ),
                   const SizedBox(height: 48.0),

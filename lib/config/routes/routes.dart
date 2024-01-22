@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pv_smart_click/features/domain/entities/analysis_response.dart';
 
 import '../../features/presentation/pages/calc_page.dart';
 import '../../features/presentation/pages/login_page.dart';
@@ -18,7 +19,8 @@ class AppRoutes {
         return _materialRoute(RegistrationPage());
 
       case '/result':
-        return _materialRoute(ResultPage());
+        final analysisResponse = settings.arguments as AnalysisResponse?;
+        return _materialRoute(ResultPage(analysisResponse: analysisResponse));
 
       default:
         return _materialRoute(CalculatorPage());

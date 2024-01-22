@@ -36,8 +36,13 @@ class Assets {
   static const String darkBlueProduction = 'assets/vectors/icons/dark_blue/production.png';
   static const String darkBlueReport = 'assets/vectors/icons/dark_blue/report.png';
   static const String darkBlueStatistics = 'assets/vectors/icons/dark_blue/statistics.png';
+  static const String entitiesAnalysisRequest = 'lib/features/domain/entities/analysis_request.dart';
+  static const String entitiesAnalysisResponse = 'lib/features/domain/entities/analysis_response.dart';
+  static const String entitiesGoogleLatLng = 'lib/features/domain/entities/googleLatLng.dart';
   static const String entitiesLoginRequest = 'lib/features/domain/entities/login_request.dart';
   static const String entitiesLoginResponse = 'lib/features/domain/entities/login_response.dart';
+  static const String entitiesMonthlyResult = 'lib/features/domain/entities/monthly_result.dart';
+  static const String entitiesTariffResponse = 'lib/features/domain/entities/tariff_response.dart';
   static const String generatedAssets = 'lib/generated/assets.dart';
   static const String libInjectionContainer = 'lib/injection_container.dart';
   static const String libMain = 'lib/main.dart';
