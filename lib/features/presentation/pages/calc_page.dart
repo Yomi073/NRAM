@@ -3,176 +3,144 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pv_smart_click/features/data/repository/auth_token_provider.dart';
 import 'package:pv_smart_click/features/presentation/widgets/my_button.dart';
+import 'package:pv_smart_click/core/constants/constants.dart';
 
 import 'package:http/http.dart' as http;
-
-import '../../data/repository/auth_token_provider.dart';
 
 class CalculatorPage extends StatefulWidget {
   @override
   _CalculatorPageState createState() => _CalculatorPageState();
 }
 
-
-
-Future<dynamic> fetchSupplier(queryParams, bearerToken) async {
-  final response = await http
-      .get(Uri.parse('https://dev.backend.pvsmartclick.com/price/supplierName').replace(queryParameters: queryParams),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': bearerToken, // Example: Authorization header with a bearer token
-    },
-  );
-
-  if (response.statusCode == 200) {
-    return response.body;
-  } else {
-    throw Exception('Failed to load supplier');
-  }
-}
-
+//mijokozina@gmail.com
+//PVSmartClick1
 
 class _CalculatorPageState extends State<CalculatorPage> {
-  List<Map<String, dynamic>> fetchedData = [];
-  List<String> hrList = [];
-  List<String> baList = [];
-  String countryCode = "";
-  List<String> possibleTariffModels = [''];
-
   String? bearerToken;
-
-  @override
-  void initState() {
-    super.initState();
-    final authTokenProvider = Provider.of<AuthTokenProvider>(context,  listen: false);
-    String? token = authTokenProvider.bearerToken;
-    fetchData(token);
-  }
-
-  Future<dynamic> fetchData(bearerToken) async {
-    final List<Map<String, String>> queryParamsList = [
-      {'country': 'HR', 'privacyStatus': 'PUBLIC_ALL'},
-      {'country': 'BA', 'privacyStatus': 'PUBLIC_ALL'},
-    ];
-
-    List<Map<String, dynamic>> _results = [];
-
-    for (var queryParams in queryParamsList) {
-      try {
-        dynamic result = await fetchSupplier(queryParams, bearerToken);
-
-        if (result is String) {
-          List<dynamic> decodedResult = json.decode(result);
-
-          List<String> namesList = decodedResult.map((item) => item['name'].toString()).toList();
-          _results.add({queryParams['country']!: namesList});
-        } else {
-          print("Unexpected result type: ${result.runtimeType}");
-        }
-
-      } catch (e) {
-        print('Error fetching supplier: $e');
-      }
-
-      setState(() {
-        fetchedData = _results;
-        hrList = fetchedData
-            .where((map) => map.containsKey("HR"))
-            .map((map) => map["HR"] as List<String>)
-            .fold<List<String>>([], (prev, element) => prev..addAll(element));
-
-        baList = fetchedData
-            .where((map) => map.containsKey("BA"))
-            .map((map) => map["BA"] as List<String>)
-            .fold<List<String>>([], (prev, element) => prev..addAll(element));
-      });
-    }
-
-    return _results;
-  }
-
-  Future<dynamic> fetchGroup(country, name, privacyStatus) async {
-    final response = await http
-        .get(Uri.parse('https://dev.backend.pvsmartclick.com/price/tariffName').replace(queryParameters: {
-      'country': country,
-      'name': name,
-      'privacyStatus': privacyStatus,
-    }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer xxx', // Example: Authorization header with a bearer token
-      },
-    );
-
-    String jsonString = response.body;
-    List<Map<String, dynamic>> jsonList = (json.decode(jsonString) as List<dynamic>).cast<Map<String, dynamic>>();
-    List<String> tariffModels = jsonList.map((item) => item['tariffModel'].toString()).toList();
-    tariffModels.add('');
-    setState(() {
-      possibleTariffModels = tariffModels;
-    });
-
-    if (response.statusCode == 200) {
-      return response.body;
-    } else {
-      throw Exception('Failed to load supplier');
-    }
-  }
-
-
+  List<Map<String, dynamic>> fetchedData = [];
   final country = TextEditingController();
   final supplier = TextEditingController();
   final tariffGroup = TextEditingController();
-
-  //final productionType = TextEditingController();
   final roofSlope = TextEditingController();
   final azimuth = TextEditingController();
   final area = TextEditingController();
-
+  final consumption = TextEditingController();
   List<String> countries = [
     'Croatia',
     'Bosnia and Herzegovina',
   ];
-
-  String? selectedCountry = 'Croatia';
-
   List<String> suppliers = [
     '',
   ];
-
+  List<String> tariffGroups = [
+    '',
+  ];
+  String? countryCode = 'HR';
+  String? selectedCountry = 'Croatia';
   String? selectedSupplier = '';
-
   String? selectedTariffGroup = '';
 
-
-  updateOptionsForThirdDropdown() async {
-    await fetchGroup(countryCode, selectedSupplier, "PUBLIC_ALL");
+  @override
+  void initState() {
+    super.initState();
+    final authTokenProvider = Provider.of<AuthTokenProvider>(context, listen: false);
+    bearerToken = authTokenProvider.bearerToken;
+    countriesDropdownUpdate();
   }
-  void updateOptionsForSecondDropdown() {
+
+  Future<List<String>> fetchSuppliers(countryCode, bearerToken) async {
+    final response = await http.get(
+      Uri.parse('$apiBaseURL/price/supplierName').replace(queryParameters: {
+        'country': countryCode,
+        'privacyStatus': 'PUBLIC_BASIC',
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': bearerToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> jsonResponse = jsonDecode(response.body);
+      return jsonResponse.map((item) => item['name'].toString()).toList();
+    } else {
+      Fluttertoast.showToast(
+        msg: "Could not fetch suppliers",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        fontSize: 18.0,
+      );
+      return [''];
+    }
+  }
+
+  Future<List<String>> fetchTariffGroup(supplierName, bearerToken) async {
+    final response = await http.get(
+      Uri.parse('$apiBaseURL/price/tariffName').replace(queryParameters: {
+        'country': countryCode,
+        'name': supplierName,
+        'privacyStatus': 'PUBLIC_BASIC',
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': bearerToken,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> jsonResponse = jsonDecode(response.body);
+      return jsonResponse.map((item) => item['tariffModel'].toString()).toList();
+    } else {
+      Fluttertoast.showToast(
+        msg: "Could not fetch suppliers",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        fontSize: 18.0,
+      );
+      return [''];
+    }
+  }
+
+  void countriesDropdownUpdate() async {
     if (selectedCountry == 'Croatia') {
-      setState(() {
-        countryCode = "HR";
-        suppliers = [ ...hrList, ''];
-      });
+      countryCode = "HR";
     } else if (selectedCountry == 'Bosnia and Herzegovina') {
-      setState(() {
-        countryCode = "BA";
-        suppliers = [...baList, ''];
-      });
+      countryCode = "BA";
     } else {
       setState(() {
         suppliers = [''];
       });
     }
+    List<String> tempSuppliers = await fetchSuppliers(countryCode, bearerToken);
+    setState(() {
+      suppliers = tempSuppliers;
+      if (suppliers.isNotEmpty) {
+        selectedSupplier = suppliers.contains(selectedSupplier) ? selectedSupplier : suppliers.first;
+      } else {
+        selectedSupplier = '';
+      }
+    });
+    supplierDropdownUpdate();
+  }
+
+  void supplierDropdownUpdate() async {
+    List<String> tempTariffGroups = await fetchTariffGroup(selectedSupplier, bearerToken);
+    setState(() {
+      tariffGroups = tempTariffGroups;
+      if (tariffGroups.isNotEmpty) {
+        selectedTariffGroup = tariffGroups.contains(selectedTariffGroup) ? selectedTariffGroup : tariffGroups.first;
+      } else {
+        selectedTariffGroup = '';
+      }
+    });
   }
 
   double _currentSliderValue = 20;
-
-  void calculate(BuildContext context) {
-    print(bearerToken);
-    Navigator.pushReplacementNamed(context, '/result');
-  }
 
   double _currentSliderValueOrientation = 0;
 
@@ -191,6 +159,12 @@ class _CalculatorPageState extends State<CalculatorPage> {
     int index = _currentSliderValueOrientation.round();
     return orientationLabels[index];
   }
+
+  void calculate(BuildContext context) {
+    print(bearerToken);
+    Navigator.pushReplacementNamed(context, '/result');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -212,125 +186,132 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     'Country',
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
-
                   DropdownButton(
                       menuMaxHeight: 300,
                       value: selectedCountry,
                       items: countries
                           .map((item) => DropdownMenuItem(
-                          value: item,
-                          child: Text(
-                            item.toString(),
-                            style: Theme.of(context).textTheme.displaySmall,
-                          ),
-                      ))
+                                value: item,
+                                child: Text(
+                                  item.toString(),
+                                  style: Theme.of(context).textTheme.displaySmall,
+                                ),
+                              ))
                           .toList(),
                       onChanged: (item) => {
-                        setState (() {
-                          selectedCountry = item;
-                          updateOptionsForSecondDropdown();
-                      })
-                  }),const SizedBox(height: 30.0),
+                            setState(() {
+                              selectedCountry = item;
+                              countriesDropdownUpdate();
+                            })
+                          }),
+                  const SizedBox(height: 30.0),
                   Text(
                     'Supplier',
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
-              SingleChildScrollView(
-                child: DropdownButton(
-                      menuMaxHeight: 400,
-                      value: selectedSupplier,
-                      isExpanded: true,
-                      items: suppliers
-                          .map((item) => DropdownMenuItem(
-                        value: item,
-                          child: ListTile(
-                            title: Text(
-                              item.toString(),
-                              style: Theme.of(context).textTheme.displaySmall,
-                            )),
-                      ))
-                          .toList(),
-                      onChanged: (item) => setState (() {
-                        selectedSupplier = item;
-                        updateOptionsForThirdDropdown();
-                      })
-                  )),
+                  SingleChildScrollView(
+                      child: DropdownButton(
+                          menuMaxHeight: 400,
+                          value: selectedSupplier,
+                          isExpanded: true,
+                          items: suppliers
+                              .map((item) => DropdownMenuItem(
+                                    value: item,
+                                    child: Text(
+                                      item.toString(),
+                                      style: Theme.of(context).textTheme.displaySmall,
+                                    ),
+                                  ))
+                              .toList(),
+                          onChanged: (item) => setState(() {
+                                selectedSupplier = item;
+                                supplierDropdownUpdate();
+                              }))),
                   const SizedBox(height: 30.0),
                   Text(
                     'Tariff group',
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
                   const SizedBox(height: 10.0),
-                DropdownButton(
-                    menuMaxHeight: 400,
-                    value: selectedTariffGroup,
-                    isExpanded: true,
-                    items: possibleTariffModels
-                        .map((item) => DropdownMenuItem(
-                      value: item,
-                      child: ListTile(
-                        title: Text(
-                        item.toString(),
-                        style: Theme.of(context).textTheme.displaySmall,
-                      )),
-                    ))
-                        .toList(),
-                    onChanged: (item) => setState (() {
-                      selectedTariffGroup = item;
-                    })
-                ),
+                  DropdownButton(
+                      menuMaxHeight: 400,
+                      value: selectedTariffGroup,
+                      isExpanded: true,
+                      items: tariffGroups
+                          .map((item) => DropdownMenuItem(
+                                value: item,
+                                child: Text(
+                                  item.toString(),
+                                  style: Theme.of(context).textTheme.displaySmall,
+                                ),
+                              ))
+                          .toList(),
+                      onChanged: (item) => setState(() {
+                            selectedTariffGroup = item;
+                          })),
                   const SizedBox(height: 30.0),
                   Text(
                     'Roof Pitch',
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
                   const SizedBox(height: 10.0),
-              SliderTheme(
-                data: SliderThemeData(
-                  trackHeight: 5.0, // Set the height of the track
-                  activeTrackColor: Theme.of(context).focusColor, // Set the background color of the slider
-                  inactiveTrackColor: Theme.of(context).shadowColor, // Set the color of the inactive portion of the slider
-                  thumbColor: Theme.of(context).hintColor, // Set the color of the thumb
-                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 9.0), // Set the shape of the thumb
-                  overlayShape: RoundSliderOverlayShape(overlayRadius: 15.0), // Set the shape of the overlay
-                ),
-                  child: Slider(
-                    value: _currentSliderValue,
-                    max: 180,
-                    divisions: 180,
-                    label: _currentSliderValue.round().toString(),
-                    onChanged: (double value) {
-                      setState(() {
-                        _currentSliderValue = value;
-                      });
-                    },
-                  )),
+                  SliderTheme(
+                      data: SliderThemeData(
+                        trackHeight: 5.0,
+                        // Set the height of the track
+                        activeTrackColor: Theme.of(context).focusColor,
+                        // Set the background color of the slider
+                        inactiveTrackColor: Theme.of(context).shadowColor,
+                        // Set the color of the inactive portion of the slider
+                        thumbColor: Theme.of(context).hintColor,
+                        // Set the color of the thumb
+                        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 9.0),
+                        // Set the shape of the thumb
+                        overlayShape: RoundSliderOverlayShape(overlayRadius: 15.0), // Set the shape of the overlay
+                      ),
+                      child: Slider(
+                        value: _currentSliderValue,
+                        max: 180,
+                        divisions: 180,
+                        label: _currentSliderValue.round().toString(),
+                        onChanged: (double value) {
+                          setState(() {
+                            _currentSliderValue = value;
+                          });
+                        },
+                      )),
                   const SizedBox(height: 30.0),
                   Text(
                     'Orientation',
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
                   const SizedBox(height: 10.0),
-              SliderTheme(
-                data: SliderThemeData(
-                  trackHeight: 5.0, // Set the height of the track
-                  activeTrackColor: Theme.of(context).focusColor, // Set the background color of the slider
-                  inactiveTrackColor: Theme.of(context).shadowColor, // Set the color of the inactive portion of the slider
-                  thumbColor: Theme.of(context).hintColor, // Set the color of the thumb
-                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 9.0), // Set the shape of the thumb
-                  overlayShape: RoundSliderOverlayShape(overlayRadius: 15.0), // Set the shape of the overlay
-                ),
-                child: Slider(
-                    value: _currentSliderValueOrientation,
-                    max: orientationLabels.length.toDouble() - 1, // Adjust the maximum value based on the number of labels
-                    divisions: orientationLabels.length - 1,
-                    label: _getCurrentOrientationLabel(),
-                    onChanged: (double value) {
-                      setState(() {
-                        _currentSliderValueOrientation = value;
-                      });
-                    },
-                  )),
+                  SliderTheme(
+                      data: SliderThemeData(
+                        trackHeight: 5.0,
+                        // Set the height of the track
+                        activeTrackColor: Theme.of(context).focusColor,
+                        // Set the background color of the slider
+                        inactiveTrackColor: Theme.of(context).shadowColor,
+                        // Set the color of the inactive portion of the slider
+                        thumbColor: Theme.of(context).hintColor,
+                        // Set the color of the thumb
+                        thumbShape: RoundSliderThumbShape(enabledThumbRadius: 9.0),
+                        // Set the shape of the thumb
+                        overlayShape: RoundSliderOverlayShape(overlayRadius: 15.0), // Set the shape of the overlay
+                      ),
+                      child: Slider(
+                        value: _currentSliderValueOrientation,
+                        max: orientationLabels.length.toDouble() - 1,
+                        // Adjust the maximum value based on the number of labels
+                        divisions: orientationLabels.length - 1,
+                        label: _getCurrentOrientationLabel(),
+                        onChanged: (double value) {
+                          setState(() {
+                            _currentSliderValueOrientation = value;
+                          });
+                        },
+                      )),
                   const SizedBox(height: 20.0),
                   TextField(
                     controller: area,
@@ -339,6 +320,16 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     decoration: const InputDecoration(
                       labelText: 'Surface',
                       hintText: 'Enter the area of the roof',
+                    ),
+                    obscureText: false,
+                  ),
+                  TextField(
+                    controller: area,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}$'))],
+                    decoration: const InputDecoration(
+                      labelText: 'Consumption',
+                      hintText: 'Enter the average monthly consumption in EUR',
                     ),
                     obscureText: false,
                   ),

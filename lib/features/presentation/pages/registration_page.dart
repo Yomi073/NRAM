@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pv_smart_click/features/presentation/widgets/my_button.dart';
 import 'package:pv_smart_click/features/presentation/widgets/textfield.dart';
+import 'package:pv_smart_click/core/constants/constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -24,17 +25,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
     final password = passwordController.text;
     final confirmPassword = confirmPasswordController.text;
 
-    if (firstName.isEmpty ||
-        lastName.isEmpty ||
-        email.isEmpty ||
-        password.isEmpty ||
-        confirmPassword.isEmpty) {
+    if (firstName.isEmpty || lastName.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
       Fluttertoast.showToast(
         msg: "Please fill in all required fields.",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        textColor: Colors.black,
         fontSize: 18.0,
       );
       return;
@@ -47,7 +43,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        textColor: Colors.black,
         fontSize: 18.0,
       );
       return;
@@ -59,7 +54,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        textColor: Colors.black,
         fontSize: 18.0,
       );
       return;
@@ -74,43 +68,36 @@ class _RegistrationPageState extends State<RegistrationPage> {
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 3,
-        textColor: Colors.black,
         fontSize: 18.0,
       );
       return;
     }
 
     final response = await http.post(
-      Uri.parse('https://dev.backend.pvsmartclick.com/users/registration'),
+      Uri.parse('$apiBaseURL/users/registration'),
       headers: {
         'Content-Type': 'application/json',
       },
-      body: jsonEncode(<String, String>{
-        'email': email,
-        'password': password,
-        "firstName": firstName,
-        "lastName": lastName,
-        "registrationType": "PERSONAL"
-      }),
+      body: jsonEncode(<String, String>{'email': email, 'password': password, "firstName": firstName, "lastName": lastName, "registrationType": "PERSONAL"}),
     );
 
     final data = jsonDecode(response.body);
     if (response.statusCode != 201) {
       Fluttertoast.showToast(
-          msg: data['message'],
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.black,
-          fontSize: 18.0);
+        msg: data['message'],
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        fontSize: 18.0,
+      );
     } else {
       Fluttertoast.showToast(
-          msg: "Registered successfully. Confirmation link has been sent.",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.black,
-          fontSize: 18.0);
+        msg: "Registered successfully. Confirmation link has been sent.",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        fontSize: 18.0,
+      );
       Navigator.pushReplacementNamed(context, '/login');
     }
   }

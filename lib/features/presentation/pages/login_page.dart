@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:pv_smart_click/features/data/repository/auth_token_provider.dart';
 import 'package:pv_smart_click/features/presentation/widgets/my_button.dart';
 import 'package:pv_smart_click/features/presentation/widgets/textfield.dart';
+import 'package:pv_smart_click/core/constants/constants.dart';
 
 import 'package:http/http.dart' as http;
-
-import '../../data/repository/auth_token_provider.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -29,14 +29,13 @@ class _LoginPageState extends State<LoginPage> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        textColor: Colors.black,
         fontSize: 18.0,
       );
       return;
     }
 
     final response = await http.post(
-      Uri.parse('https://dev.backend.pvsmartclick.com/auth/login'),
+      Uri.parse('$apiBaseURL/auth/login'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -48,18 +47,17 @@ class _LoginPageState extends State<LoginPage> {
 
     if (response.statusCode == 200) {
       var jwt = response.headers['x-api-authentication-token'];
-      final authTokenProvider =
-          Provider.of<AuthTokenProvider>(context, listen: false);
+      final authTokenProvider = Provider.of<AuthTokenProvider>(context, listen: false);
       authTokenProvider.setBearerToken(jwt);
       Navigator.pushNamed(context, '/calculator');
     } else if (response.statusCode != 200) {
       Fluttertoast.showToast(
-          msg: "Wrong credentials",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.black,
-          fontSize: 18.0);
+        msg: "Wrong credentials",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        fontSize: 18.0,
+      );
     } else {
       throw Exception(response.body);
     }
