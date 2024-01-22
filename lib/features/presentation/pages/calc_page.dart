@@ -18,11 +18,6 @@ class CalculatorPage extends StatefulWidget {
 class _CalculatorPageState extends State<CalculatorPage> {
   String? bearerToken;
   List<Map<String, dynamic>> fetchedData = [];
-  final country = TextEditingController();
-  final supplier = TextEditingController();
-  final tariffGroup = TextEditingController();
-  final roofSlope = TextEditingController();
-  final azimuth = TextEditingController();
   final area = TextEditingController();
   final consumption = TextEditingController();
   List<String> countries = [
@@ -137,9 +132,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
     });
   }
 
-  double _currentSliderValue = 20;
+  double _roofAngleSlider = 20;
 
-  double _currentSliderValueOrientation = 0;
+  double _roofOrientationSlider = 0;
 
   List<String> orientationLabels = [
     'N',
@@ -152,14 +147,15 @@ class _CalculatorPageState extends State<CalculatorPage> {
     'NW',
   ];
 
-  String _getCurrentOrientationLabel() {
-    int index = _currentSliderValueOrientation.round();
+  String getCurrentOrientationLabel() {
+    int index = _roofOrientationSlider.round();
     return orientationLabels[index];
   }
 
   void calculate(BuildContext context) {
-    print(bearerToken);
-    Navigator.pushReplacementNamed(context, '/result');
+    print(_roofAngleSlider);
+    print(_roofOrientationSlider * 45);
+    //Navigator.pushReplacementNamed(context, '/result');
   }
 
   @override
@@ -267,13 +263,13 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         overlayShape: RoundSliderOverlayShape(overlayRadius: 15.0), // Set the shape of the overlay
                       ),
                       child: Slider(
-                        value: _currentSliderValue,
-                        max: 180,
-                        divisions: 180,
-                        label: _currentSliderValue.round().toString(),
+                        value: _roofAngleSlider,
+                        max: 90,
+                        divisions: 90,
+                        label: _roofAngleSlider.round().toString(),
                         onChanged: (double value) {
                           setState(() {
-                            _currentSliderValue = value;
+                            _roofAngleSlider = value;
                           });
                         },
                       )),
@@ -298,14 +294,14 @@ class _CalculatorPageState extends State<CalculatorPage> {
                         overlayShape: RoundSliderOverlayShape(overlayRadius: 15.0), // Set the shape of the overlay
                       ),
                       child: Slider(
-                        value: _currentSliderValueOrientation,
+                        value: _roofOrientationSlider,
                         max: orientationLabels.length.toDouble() - 1,
                         // Adjust the maximum value based on the number of labels
                         divisions: orientationLabels.length - 1,
-                        label: _getCurrentOrientationLabel(),
+                        label: getCurrentOrientationLabel(),
                         onChanged: (double value) {
                           setState(() {
-                            _currentSliderValueOrientation = value;
+                            _roofOrientationSlider = value;
                           });
                         },
                       )),
