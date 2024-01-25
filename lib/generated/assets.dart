@@ -2,7 +2,6 @@
 class Assets {
   Assets._();
 
-  static const String assets3a = 'assets/3a.json';
   static const String barlowBarlowBlack = 'assets/fonts/barlow/Barlow-Black.ttf';
   static const String barlowBarlowBlackItalic = 'assets/fonts/barlow/Barlow-BlackItalic.ttf';
   static const String barlowBarlowBold = 'assets/fonts/barlow/Barlow-Bold.ttf';
@@ -21,10 +20,6 @@ class Assets {
   static const String barlowBarlowSemiBoldItalic = 'assets/fonts/barlow/Barlow-SemiBoldItalic.ttf';
   static const String barlowBarlowThin = 'assets/fonts/barlow/Barlow-Thin.ttf';
   static const String barlowBarlowThinItalic = 'assets/fonts/barlow/Barlow-ThinItalic.ttf';
-  static const String blocLoginBloc = 'lib/features/presentation/bloc/login_bloc.dart';
-  static const String blocLoginEvent = 'lib/features/presentation/bloc/login_event.dart';
-  static const String blocLoginState = 'lib/features/presentation/bloc/login_state.dart';
-  static const String constantsConstants = 'lib/core/constants/constants.dart';
   static const String darkBlueAnalysis = 'assets/vectors/icons/dark_blue/analysis.png';
   static const String darkBlueBattery = 'assets/vectors/icons/dark_blue/battery.png';
   static const String darkBlueConsumption = 'assets/vectors/icons/dark_blue/consumption.png';
@@ -36,16 +31,6 @@ class Assets {
   static const String darkBlueProduction = 'assets/vectors/icons/dark_blue/production.png';
   static const String darkBlueReport = 'assets/vectors/icons/dark_blue/report.png';
   static const String darkBlueStatistics = 'assets/vectors/icons/dark_blue/statistics.png';
-  static const String entitiesAnalysisRequest = 'lib/features/domain/entities/analysis_request.dart';
-  static const String entitiesAnalysisResponse = 'lib/features/domain/entities/analysis_response.dart';
-  static const String entitiesGoogleLatLng = 'lib/features/domain/entities/googleLatLng.dart';
-  static const String entitiesLoginRequest = 'lib/features/domain/entities/login_request.dart';
-  static const String entitiesLoginResponse = 'lib/features/domain/entities/login_response.dart';
-  static const String entitiesMonthlyResult = 'lib/features/domain/entities/monthly_result.dart';
-  static const String entitiesTariffResponse = 'lib/features/domain/entities/tariff_response.dart';
-  static const String generatedAssets = 'lib/generated/assets.dart';
-  static const String libInjectionContainer = 'lib/injection_container.dart';
-  static const String libMain = 'lib/main.dart';
   static const String lightBlueAnalysis = 'assets/vectors/icons/light_blue/analysis.png';
   static const String lightBlueBattery = 'assets/vectors/icons/light_blue/battery.png';
   static const String lightBlueConsumption = 'assets/vectors/icons/light_blue/consumption.png';
@@ -78,27 +63,13 @@ class Assets {
   static const String navigationRight = 'assets/vectors/icons/navigation/right.png';
   static const String navigationSearchIcon = 'assets/vectors/icons/navigation/search_icon.png';
   static const String navigationShareIcon = 'assets/vectors/icons/navigation/share_icon.png';
-  static const String pagesCalcPage = 'lib/features/presentation/pages/calc_page.dart';
-  static const String pagesLoginPage = 'lib/features/presentation/pages/login_page.dart';
-  static const String pagesRegistrationPage = 'lib/features/presentation/pages/registration_page.dart';
-  static const String pagesResult = 'lib/features/presentation/pages/result.dart';
   static const String photoPhoto1 = 'assets/vectors/photo/photo1.png';
   static const String photoPowerPhoto = 'assets/vectors/photo/power_photo.png';
   static const String photoSolarPanelRoof = 'assets/vectors/photo/solar_panel_roof.png';
-  static const String pvSmartClickAssets3a = 'assets/3a.json';
-  static const String remoteApiService = 'lib/features/data/sources/remote/api_service.dart';
-  static const String repositoryAuthRepository = 'lib/features/domain/repository/auth_repository.dart';
-  static const String repositoryAuthRepositoryImpl = 'lib/features/data/repository/auth_repository_impl.dart';
-  static const String repositoryAuthTokenProvider = 'lib/features/data/repository/auth_token_provider.dart';
-  static const String resourcesDataState = 'lib/core/resources/data_state.dart';
-  static const String routesRoutes = 'lib/config/routes/routes.dart';
   static const String socialFacebook = 'assets/vectors/icons/social/facebook.png';
   static const String socialInstagram = 'assets/vectors/icons/social/instagram.png';
   static const String socialLinkedin = 'assets/vectors/icons/social/linkedin.png';
   static const String socialTwitter = 'assets/vectors/icons/social/twitter.png';
-  static const String themeAppThemes = 'lib/config/theme/app_themes.dart';
-  static const String usecaseUsecase = 'lib/core/usecase/usecase.dart';
-  static const String usecasesPostLogin = 'lib/features/domain/usecases/post_login.dart';
   static const String whiteAnalysis = 'assets/vectors/icons/white/analysis.png';
   static const String whiteBattery = 'assets/vectors/icons/white/battery.png';
   static const String whiteConsumption = 'assets/vectors/icons/white/consumption.png';
@@ -110,8 +81,6 @@ class Assets {
   static const String whiteProduction = 'assets/vectors/icons/white/production.png';
   static const String whiteReport = 'assets/vectors/icons/white/report.png';
   static const String whiteStatistics = 'assets/vectors/icons/white/statistics.png';
-  static const String widgetsMyButton = 'lib/features/presentation/widgets/my_button.dart';
-  static const String widgetsTextfield = 'lib/features/presentation/widgets/textfield.dart';
   static const String yellowAnalysis = 'assets/vectors/icons/yellow/analysis.png';
   static const String yellowBattery = 'assets/vectors/icons/yellow/battery.png';
   static const String yellowConsumption = 'assets/vectors/icons/yellow/consumption.png';
