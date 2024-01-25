@@ -59,7 +59,6 @@ flutter:
     - assets/vectors/icons/social/
     - assets/vectors/logo/
     - assets/vectors/photo/
-    - assets/3a.json
     - lib/features/
     - lib/features/data/
     - lib/features/presentation/
