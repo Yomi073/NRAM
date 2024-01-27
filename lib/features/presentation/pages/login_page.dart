@@ -34,32 +34,42 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    final response = await http.post(
-      Uri.parse('$apiBaseURL/auth/login'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(<String, String>{
-        'email': email,
-        'password': password,
-      }),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$apiBaseURL/auth/login'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(<String, String>{
+          'email': email,
+          'password': password,
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      var jwt = response.headers['x-api-authentication-token'];
-      final authTokenProvider = Provider.of<AuthTokenProvider>(context, listen: false);
-      authTokenProvider.setBearerToken(jwt);
-      Navigator.pushNamed(context, '/calculator');
-    } else if (response.statusCode != 200) {
+      if (response.statusCode == 200) {
+        var jwt = response.headers['x-api-authentication-token'];
+        final authTokenProvider = Provider.of<AuthTokenProvider>(context, listen: false);
+        authTokenProvider.setBearerToken(jwt);
+        Navigator.pushNamed(context, '/calculator');
+      } else if (response.statusCode != 200) {
+        Fluttertoast.showToast(
+          msg: "Wrong credentials",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 18.0,
+        );
+      } else {
+        throw Exception(response.body);
+      }
+    } catch (e) {
       Fluttertoast.showToast(
-        msg: "Wrong credentials",
-        toastLength: Toast.LENGTH_SHORT,
+        msg: e.toString(),
+        toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
         fontSize: 18.0,
       );
-    } else {
-      throw Exception(response.body);
     }
   }
 
